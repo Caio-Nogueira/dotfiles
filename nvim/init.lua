@@ -75,6 +75,11 @@ vim.opt.scrolloff = 20
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+vim.opt.expandtab = true
+vim.opt.smartindent = true
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 2
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
@@ -310,6 +315,8 @@ require('lazy').setup({
     end,
   },
 
+  require 'kickstart.plugins.harpoon',
+
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -450,7 +457,7 @@ require('lazy').setup({
 
           local codelens = vim.api.nvim_create_augroup('codeLens', { clear = true })
           vim.api.nvim_create_autocmd({ 'BufEnter', 'InsertLeave', 'CursorHold' }, {
-            -- pattern = { '*.ml', '*.mli' }, -- Uncomment this line to only enable for OCaml files
+            pattern = { '*.ml', '*.mli' }, -- Uncomment this line to only enable for OCaml files -> could also be useful for Rust
             group = codelens,
             callback = function()
               vim.lsp.codelens.refresh()
@@ -485,6 +492,12 @@ require('lazy').setup({
           'additionalTextEdits',
         },
       }
+      local nvim_lsp = require 'lspconfig'
+      -- Define a function to detect the root directory
+      local function get_root_dir(fname)
+        return nvim_lsp.util.root_pattern('CMakeLists.txt', '.git')(fname) or vim.loop.os_homedir()
+      end
+
       local servers = {
         jsonls = {},
         gopls = {
@@ -516,7 +529,24 @@ require('lazy').setup({
           filetypes = { 'python' },
         },
         clangd = {
-          capabilities = extended_capabilities,
+          capabilities = capabilities,
+          root_dir = get_root_dir,
+          cmd = {
+            '/opt/homebrew/opt/llvm/bin/clangd',
+            -- Don't forget to install clangd with brew and set it to the PATH if working with M*-chips
+            '--all-scopes-completion',
+            '--background-index',
+            '--header-insertion=iwyu',
+            '--pch-storage=memory',
+            '--offset-encoding=utf-16',
+            '--pretty',
+            '--inlay-hints',
+            '--clang-tidy',
+            '--completion-style=detailed',
+            '--compile-commands-dir=build',
+          },
+          -- init_option = { fallbackFlags = { '-std=c++2a' } },
+          filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
         },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -604,6 +634,8 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.

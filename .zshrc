@@ -108,6 +108,13 @@ case ":$PATH:" in
 esac
 # pnpm end
 
+
+# Workaround to use libc++ with clang -> bundled with homebrew llvm
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/llvm/lib"
+export CPPFLAGS="-I/usr/local/opt/llvm/include"
+export CXXFLAGS="-I/usr/local/opt/llvm/include"
+
 # Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
