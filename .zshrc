@@ -110,10 +110,11 @@ esac
 
 
 # Workaround to use libc++ with clang -> bundled with homebrew llvm
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+# export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/llvm/lib"
 export CPPFLAGS="-I/usr/local/opt/llvm/include"
 export CXXFLAGS="-I/usr/local/opt/llvm/include"
+
 
 # Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
@@ -137,6 +138,7 @@ alias gc="git commit"
 # Set up alias for air (go)
 alias air='/Users/caio/go/bin/air'
 
+
 # VI mode
 bindkey -v
 
@@ -155,4 +157,17 @@ cx() { cd "$@" && lt; }
 fcd() { cd "$(find . -type d -not -path '*/.*' | fzf)" && lt; }
 f() { echo "$(find . -type f -not -path '*/.*' | fzf)" | pbcopy }
 fv() { nvim "$(find . -type f -not -path '*/.*' | fzf)" }
+
+
+# Created by `pipx` on 2024-08-12 13:57:53
+export PATH="$PATH:/Users/caio/.local/bin"
+
+# bun completions
+[ -s "/Users/caio/.bun/_bun" ] && source "/Users/caio/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+eval "$(direnv hook zsh)"
 

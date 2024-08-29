@@ -162,7 +162,7 @@ require('lazy').setup({
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  -- require('gitsigns')
+  -- require 'gitsigns'
   --  .setup { ... }
   --
   -- See `:help gitsigns` to understand what the configuration keys do
@@ -262,10 +262,20 @@ require('lazy').setup({
         --
         -- defaults = {
         --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        --     vimgrep_arguments = {
+        --       'rg',
+        --       '--line-number',
+        --       '--hidden',
+        --     },
         --   },
         -- },
-        -- pickers = {}
+        pickers = {
+          find_files = {
+            no_ignore = true,
+            no_ignore_parent = true,
+            hidden = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -281,7 +291,7 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', builtin.fd, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -503,6 +513,7 @@ require('lazy').setup({
         gopls = {
           settings = {
             gopls = {
+              buildFlags = { '-tags=storage,resolvers' },
               completeUnimported = true,
               analyses = {
                 unusedparams = true,
@@ -525,9 +536,11 @@ require('lazy').setup({
             'dune',
           },
         },
+
         pyright = {
           filetypes = { 'python' },
         },
+
         clangd = {
           capabilities = capabilities,
           root_dir = get_root_dir,
@@ -587,6 +600,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        -- 'corelldb', -- Used for debugging C/C++ code TODO: remove this from here
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -860,7 +874,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
