@@ -42,7 +42,7 @@ return {
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
-        'delve',
+        'delve', -- For Go debugging
         'corelldb', -- For C/C++ debugging
       },
     }
@@ -56,19 +56,6 @@ return {
         args = { '--port', '5050' },
       },
     }
-
-    -- dap.configurations.cpp = {
-    --   {
-    --     name = 'Launch file',
-    --     type = 'corelldb',
-    --     request = 'launch',
-    --     program = function()
-    --       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    --     end,
-    --     cwd = '${workspaceFolder}',
-    --     stopOnEntry = false,
-    --   },
-    -- }
 
     -- Basic debugging keymaps, feel free to change to your liking!
     vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Debug: Start/Continue' })
@@ -110,6 +97,13 @@ return {
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
     -- Install golang specific config
-    require('dap-go').setup()
+    require('dap-go').setup {
+      delve = {
+        build_flags = { '-tags=storage,resolvers' },
+      },
+
+      vim.keymap.set('n', '<leader>gdt', '<cmd>lua require("dap-go").debug_test()<CR>', { desc = 'Debug: [G]o [D]ebug [T]est' }),
+      -- vim.keymap.set('n', '<leader>gd', '<cmd>lua require("dap-go").continue()<CR>', { desc = 'Debug: [G]o [D]ebug' }),
+    }
   end,
 }

@@ -57,7 +57,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '▸ ', trail = '·', nbsp = '␣', eol = '↲' }
+vim.opt.listchars = { tab = '▸ ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -272,10 +272,10 @@ require('lazy').setup({
         pickers = {
           find_files = {
             no_ignore = true,
-            no_ignore_parent = true,
             hidden = true,
           },
         },
+
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -299,6 +299,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>st', function()
+        require('telescope.themes').get_dropdown {
+          previewer = true,
+        }
+      end, { desc = '[S]elect [T]heme' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -726,7 +731,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['Tab'] = cmp.mapping.confirm { select = true },
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -781,7 +786,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'monokai-pro'
+      vim.cmd.colorscheme 'tokyonight-moon'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -793,7 +798,7 @@ require('lazy').setup({
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   -- AI pair programming
-  { 'github/copilot.vim' },
+  -- { 'github/copilot.vim' },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -887,8 +892,6 @@ require('lazy').setup({
   --
   require 'kickstart.plugins.trouble',
 
-  require 'kickstart.plugins.theme',
-
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -896,7 +899,6 @@ require('lazy').setup({
     config = function()
       require('lualine').setup {
         options = {
-          theme = 'monokai-pro',
           section_separators = { '', '' },
           component_separators = { '', '' },
         },
